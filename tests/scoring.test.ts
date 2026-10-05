@@ -1,0 +1,18 @@
+import {describe,it,expect} from 'vitest';
+import {calculate,needsReview,auditMatches,validateQuote,isDue,REFRESH_HOURS,validCitations} from '../src/lib/scoring';
+import type {Assessment,DimensionResult,Evidence} from '../src/lib/types';
+const now=new Date('2026-10-05T12:00:00Z');
+const e:Evidence={id:'e1',asset_id:'usdc',url:'https://circle.com',title:'Evidence',kind:'code_audit',quote:'This report concerns the named contract.',document_hash:'sha256',reporting_date:'2026-10-01',retrieved_at:now.toISOString(),page:1,chain:'ethereum',contract:'0xABC'};
+const r:DimensionResult={score:80,explanation:{ru:'',en:''},evidence_ids:['e1'],verified:true,relevant_until:'2026-12-01',conflict:false};
+const dims=()=>({backing:{...r},redemption:{...r},technology:{...r},governance:{...r},market:{...r},transparency:{...r}});
+const assessment=(score:number|null):Assessment=>({id:'a',asset_id:'usdc',created_at:now.toISOString(),methodology_version:'1',dimensions:dims(),evidence:[e],critical:'none',critical_reason:{ru:'',en:''},score,completeness:100,status:'evaluated',explanation:{ru:'',en:''},model:'m'});
+describe('risk methodology',()=>{
+ it('calculates an exact deterministic weighted score',()=>{const d=dims();d.backing.score=100;expect(calculate(d,[e],'none',now).score).toBe(85);expect(calculate(d,[e],'none',now)).toEqual(calculate(d,[e],'none',now));});
+ it('never imputes missing evidence',()=>{const d=dims();d.backing.evidence_ids=[];expect(calculate(d,[e],'none',now)).toMatchObject({score:null,completeness:75});});
+ it('suppresses expired, conflicting and critical aggregates',()=>{const d=dims();d.technology.relevant_until='2026-01-01';expect(calculate(d,[e],'none',now).score).toBeNull();d.technology={...r,conflict:true};expect(calculate(d,[e],'none',now).status).toBe('needs_review');expect(calculate(dims(),[e],'confirmed',now).status).toBe('critical');});
+ it('requires review exactly at five points and for new methodology',()=>{expect(needsReview(assessment(80),assessment(84.9))).toBe(false);expect(needsReview(assessment(80),assessment(85))).toBe(true);expect(needsReview(null,assessment(80))).toBe(true);expect(needsReview(assessment(80),{...assessment(80),methodology_version:'2'})).toBe(true);});
+ it('rejects NaN and out-of-range scores',()=>{for(const score of [NaN,101,-1]){const d=dims();d.market.score=score;expect(calculate(d,[e],'none',now).score).toBeNull();}});
+ it('rejects wrong-chain and wrong-contract audit evidence',()=>{expect(auditMatches(e,'usdc','ethereum','0xabc')).toBe(true);expect(auditMatches(e,'usdc','arbitrum','0xabc')).toBe(false);expect(auditMatches(e,'usdt')).toBe(false);});
+ it('rejects invented quotes and citations',()=>{expect(validateQuote('This report concerns the named contract.','This report concerns\n the named contract.')).toBe(true);expect(validateQuote('Invented statement in the model response.',e.quote)).toBe(false);expect(validCitations(['fake'],[e])).toBe(false);});
+ it('uses the selected cadence without AI',()=>{expect(REFRESH_HOURS.intensive.market).toBe(.25);expect(isDue('2026-10-05T11:50:00Z',.25,now)).toBe(false);expect(isDue(null,1,now)).toBe(true);});
+});

@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "stablecoin-risk-radar-api",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-05",
+  "compatibility_flags": ["nodejs_compat"],
+  "account_id": "82076b8af0c128c86af3b0854cf80378",
+  "workers_dev": true,
+  "d1_databases": [{"binding":"DB","database_name":"stablecoin-risk-radar","database_id":"7a4f7dee-5ea0-48a6-ab54-b8eddcd670eb","migrations_dir":"migrations"}],
+  "r2_buckets": [{"binding":"DOCUMENTS","bucket_name":"stablecoin-risk-radar-documents","jurisdiction":"eu"}],
+  "vars": {"FRONTEND_URL":"https://raydo-max.github.io/stablecoin-risk-radar/","OWNER_GITHUB_ID":"287957837","QSTASH_URL":"https://qstash-eu-central-1.upstash.io","API_URL":"https://stablecoin-risk-radar-api.krimart.workers.dev"},
+  "triggers": {"crons":["*/15 * * * *"]},
+  "observability": {"enabled":true,"logs":{"invocation_logs":false}}
+}

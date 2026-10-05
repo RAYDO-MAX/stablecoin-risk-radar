@@ -1,0 +1,18 @@
+PRAGMA foreign_keys=ON;
+CREATE TABLE assets(id TEXT PRIMARY KEY,data TEXT NOT NULL CHECK(json_valid(data)),visible INTEGER NOT NULL DEFAULT 0 CHECK(visible IN(0,1)));
+CREATE TABLE settings(id INTEGER PRIMARY KEY CHECK(id=1),data TEXT NOT NULL CHECK(json_valid(data)));
+INSERT INTO settings VALUES(1,'{"profile":"balanced","monthly_budget_usd":5,"automation_enabled":false,"last_market_at":null,"last_documents_at":null,"last_search_at":null}');
+CREATE TABLE assessments(id TEXT PRIMARY KEY,asset_id TEXT NOT NULL REFERENCES assets(id),data TEXT NOT NULL CHECK(json_valid(data)),published INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL,reviewed_at TEXT);
+CREATE INDEX assessments_asset_published ON assessments(asset_id,published,created_at DESC);
+CREATE TABLE documents(id TEXT PRIMARY KEY,asset_id TEXT NOT NULL REFERENCES assets(id),url TEXT NOT NULL,hash TEXT NOT NULL,extracted_hash TEXT NOT NULL,title TEXT NOT NULL,kind TEXT NOT NULL,reporting_date TEXT,retrieved_at TEXT NOT NULL,body TEXT NOT NULL,raw_key TEXT,status TEXT NOT NULL,UNIQUE(asset_id,url,extracted_hash));
+CREATE INDEX documents_asset_date ON documents(asset_id,retrieved_at DESC);
+CREATE VIRTUAL TABLE document_search USING fts5(id UNINDEXED,asset_id UNINDEXED,title,body,tokenize='unicode61');
+CREATE TRIGGER documents_search_insert AFTER INSERT ON documents BEGIN INSERT INTO document_search(id,asset_id,title,body) VALUES(new.id,new.asset_id,new.title,new.body); END;
+CREATE TABLE facts(id TEXT PRIMARY KEY,assessment_id TEXT NOT NULL REFERENCES assessments(id),document_id TEXT NOT NULL REFERENCES documents(id),data TEXT NOT NULL CHECK(json_valid(data)),verification TEXT NOT NULL CHECK(json_valid(verification)));
+CREATE TABLE jobs(id TEXT PRIMARY KEY,asset_id TEXT REFERENCES assets(id),kind TEXT NOT NULL,status TEXT NOT NULL,stage TEXT NOT NULL,error TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,run_id TEXT,input TEXT NOT NULL DEFAULT '{}');
+CREATE UNIQUE INDEX jobs_active_asset ON jobs(asset_id) WHERE status IN('queued','running');
+CREATE TABLE budget_ledger(id TEXT PRIMARY KEY,month TEXT NOT NULL,provider TEXT NOT NULL,ceiling_usd REAL NOT NULL CHECK(ceiling_usd>=0),actual_usd REAL,status TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE INDEX ledger_month ON budget_ledger(month);
+CREATE TABLE sessions(token_hash TEXT PRIMARY KEY,github_id TEXT NOT NULL,expires_at TEXT NOT NULL);
+CREATE TABLE oauth_states(state_hash TEXT PRIMARY KEY,expires_at TEXT NOT NULL);
+CREATE TABLE events(id TEXT PRIMARY KEY,asset_id TEXT REFERENCES assets(id),kind TEXT NOT NULL,data TEXT NOT NULL,created_at TEXT NOT NULL);

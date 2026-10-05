@@ -1,0 +1,8 @@
+import fs from 'node:fs';import {DatabaseSync} from 'node:sqlite';
+const [input,output]=process.argv.slice(2);if(!input||!output){console.error('Usage: node scripts/restore-local.mjs private-backup.json /private/tmp/radar-restore.sqlite');process.exit(1);}
+if(fs.existsSync(output))throw new Error('Restore target must be new and empty');
+const backup=JSON.parse(fs.readFileSync(input,'utf8'));if(backup.schema_version!==1)throw new Error('Unsupported backup schema');
+const tables=['assets','settings','assessments','documents','facts','jobs','budget_ledger','events'];
+for(const t of tables)if(!Array.isArray(backup[t]))throw new Error('Missing table: '+t);
+const db=new DatabaseSync(output);db.exec(fs.readFileSync(new URL('../migrations/0001_initial.sql',import.meta.url),'utf8'));db.exec('BEGIN');
+try{db.exec('DELETE FROM settings');for(const table of tables){const columns=db.prepare(`PRAGMA table_info(${table})`).all().map(r=>r.name);for(const row of backup[table]){if(Object.keys(row).some(k=>!columns.includes(k)))throw new Error('Unexpected field in '+table);const names=columns.filter(k=>Object.hasOwn(row,k));db.prepare(`INSERT INTO ${table}(${names.join(',')}) VALUES(${names.map(()=>'?').join(',')})`).run(...names.map(k=>row[k]));}}const violations=db.prepare('PRAGMA foreign_key_check').all();if(violations.length)throw new Error('Foreign key inconsistency');db.exec('COMMIT');for(const t of tables)console.log(t+': '+db.prepare(`SELECT count(*) AS n FROM ${t}`).get().n);console.log('Isolated restore complete. R2 objects must be restored separately.');}catch(e){db.exec('ROLLBACK');throw e;}finally{db.close();}
