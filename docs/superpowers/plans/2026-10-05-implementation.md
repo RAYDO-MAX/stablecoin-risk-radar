@@ -20,11 +20,17 @@
 
 ## Tasks
 - [x] Scoring/schema: create shared types, rubric, freshness and publication policy; test null aggregate, exact threshold and critical suppression.
-- [ ] Dashboard: catalog, heatmap, comparisons, asset evidence/history, methodology, RU/EN and mobile layouts; verify in browser.
-- [ ] Admin/auth: server-verified GitHub owner, adding assets, research, review, budget/profile controls and RAG; test unauthorized requests.
-- [ ] Storage/workflow: server access checks and SQLite constraints, immutable versions, private bucket, budget reservations, Upstash stages, source hashing, safe extraction and citation validation; test retry and budget edge cases.
-- [ ] Delivery: pinned packages, Actions build/deploy, secrets scan, backups/restore tool, README and runbook; publish independent repo and verify Pages.
-- [ ] Provision: provision separate free Cloudflare D1 and private R2, deploy Worker/secrets, and configure GitHub OAuth. Supabase and Vector free slots are full; both were replaced with owner approval.
+- [x] Dashboard: catalog, heatmap, comparisons, asset evidence/history, methodology, RU/EN and mobile layouts; verify in browser.
+- [x] Admin/auth: server-verified GitHub owner, adding assets, research, review, budget/profile controls and RAG; test unauthorized requests.
+- [x] Storage/workflow: server access checks and SQLite constraints, immutable versions, private bucket, budget reservations, Upstash stages, source hashing, safe extraction and citation validation; test retry and budget edge cases.
+- [x] Delivery: pinned packages, Actions build/deploy, secrets scan, backups/restore tool, README and runbook; publish independent repo and verify Pages.
+- [x] Provision: provision separate free Cloudflare D1 and private R2, deploy Worker/secrets, and configure GitHub OAuth. Supabase and Vector free slots are full; both were replaced with owner approval.
 
 ## Approved infrastructure revision
 Supabase free-project and Upstash Vector quotas were exhausted. On 2026-10-05 the owner selected Cloudflare Workers + D1 and activated R2. $5/month API cap approved. Original architecture is retained in the spec as decision history; this implementation plan and README describe the active architecture.
+
+## Remaining launch gate
+- [ ] Owner review of the initial ten research results and calibration of the experimental rubric/semantic thresholds. No aggregate is published from incomplete evidence.
+- [ ] Positive hosted RAG citation check against evidence that passes semantic verification; the current insufficient-evidence refusal has been verified.
+
+Hosted GitHub OAuth and one full USDC research were verified on 2026-10-05. An initial incomplete model response failed safely; reasoning was explicitly disabled for bounded extraction, and the repeated research completed.

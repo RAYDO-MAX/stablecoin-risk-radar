@@ -2,7 +2,9 @@
 
 Public RU/EN research dashboard: catalog, evidence coverage, six-dimensional heatmap, comparisons, source excerpts and assessment history. Initial assets: USDT, USDC, USDS, DAI, USDe, PYUSD, RLUSD, USD1, USDG and USDD.
 
-The catalog starts **without published risk scores**. Market data are observed DeFiLlama values; they do not establish safety. Ratings become available only after source extraction, verification and owner review. A score of 100 represents criterion fulfillment, not a guarantee or probability of safety. Methodology 1.0 is experimental and requires manual validation on the initial ten assets.
+The catalog starts **without published risk scores**.
+
+![Public research dashboard](docs/preview.png) Market data are observed DeFiLlama values; they do not establish safety. Ratings become available only after source extraction, verification and owner review. A score of 100 represents criterion fulfillment, not a guarantee or probability of safety. Methodology 1.0 is experimental and requires manual validation on the initial ten assets.
 
 ## Architecture
 
@@ -58,4 +60,4 @@ Refresh profiles: economy 24h/7d/7d, balanced 1h/24h/7d, intensive 15m/6h/24h fo
 
 ## Launch status and operations
 
-See [docs/RUNBOOK.md](docs/RUNBOOK.md) for credentials, data recovery and launch checks. Hosting and database resources use free tiers; no automatic upgrade is configured. Jev thresholds are provisional policy values, not measured accuracy. Initial manual validation, hosted OAuth and live research are separate launch checks, not inferred from a successful build. PDF OCR is not performed in Workers. Unreadable documents create no confirmed facts. Sources larger than the archival limit are flagged for processing. Private document archives and usage metadata are excluded from public endpoints.
+See [docs/RUNBOOK.md](docs/RUNBOOK.md) for credentials, data recovery and launch checks. Hosting and database resources use free tiers; no automatic upgrade is configured. Jev thresholds are provisional policy values, not measured accuracy. Hosted owner OAuth and the live USDC research pipeline were verified on 2026-10-05. Initial manual validation and a positive RAG citation check remain separate launch gates; the insufficient-evidence refusal was verified. PDF OCR is not performed in Workers. Unreadable documents create no confirmed facts. Sources larger than the archival limit are flagged for processing. Private document archives and usage metadata are excluded from public endpoints.

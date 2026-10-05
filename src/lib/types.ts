@@ -7,6 +7,7 @@ export type Evidence = {
   id: string; url: string; title: string; kind: 'reserve_attestation'|'financial_audit'|'code_audit'|'whitepaper'|'terms'|'market'|'disclosure';
   quote: string; document_hash: string; reporting_date: string | null; retrieved_at: string; page: number | null;
   asset_id: string; chain?: string; contract?: string; document_id?: string;
+  verification?: {confidence:number|null;verified:boolean;claim:string;criterion:string};
 };
 export type DimensionResult = {
   score: number | null; explanation: Bilingual; evidence_ids: string[];
