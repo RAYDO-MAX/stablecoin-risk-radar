@@ -30,3 +30,15 @@ Inspect owner workspace jobs and provider configuration. Previous published asse
 ## Authentication
 
 Owner GitHub ID is pinned server-side. Every administrative endpoint requires a hashed, unexpired application session. A URL or UI button is not authorization. OAuth state must match both a short-lived database record and a Secure/HttpOnly cookie. POST requires the configured frontend origin. No repository scopes are requested from visitors.
+
+## Reverify saved evidence
+
+Export a fresh private backup first. Saved statements can be reverified without repeating paid OpenRouter/Tavily extraction:
+
+```sh
+node --import ./scripts/ts-runtime.mjs scripts/reverify-saved.mjs /private/tmp/radar-backup.json /private/tmp/radar-new-verification.json apply
+```
+
+The script reserves $0.02 per nonempty asset before Jev, retains old assessments, creates new drafts, and records which prior draft was superseded. Re-running with a new output file reuses already applied results for the same source assessment and methodology. A provider failure preserves the last result; uncertain reservations remain allocated. The shared TypeScript verifier is loaded through the installed esbuild transformer; no new runtime dependency or secret is embedded. `preview` performs no paid calls or remote writes. Do not treat preview probabilities as actual verification.
+
+The local eight-case Jev regression benchmark is deliberately small; it does not statistically validate stablecoin risk scores. Actual criterion fulfillment remains unknown until all required evidence passes. Generic missing evidence or hypothetical risks cannot create a critical-incident flag; the extractor must cite a dated event and Jev separately verifies that the source reports an actual incident.

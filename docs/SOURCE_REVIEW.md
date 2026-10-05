@@ -1,0 +1,24 @@
+# Source review — 2026-10-05
+
+This is an evidence inventory, not a verdict that any asset failed an audit. All initial saved candidates were reviewed again. No asset has evidence resolving all 24 rubric criteria. Missing reports and uncertain scope remain unknown.
+
+| Asset | Appropriate primary sources located | Remaining work before a complete rating |
+|---|---|---|
+| USDT | [Transparency](https://tether.to/en/transparency/), [relevant information document](https://tether.to/public/Relevant_Information_Document_-_Tether_International%2C_S.A._de_C.V..pdf), legal terms | Retrieve the actual latest USDt reserve opinion; do not use Tether Gold reports. Prior January 1 dates were fabricated from a page year and are rejected. Match current contracts and obtain market-depth/stress evidence. |
+| USDC | [Transparency](https://www.circle.com/transparency) and its August 2026 reserve examination | Two narrow reserve-report facts pass verification. Broad legacy claims and unrelated website dates do not. A reserve opinion does not prove code security, legal bankruptcy rights or stress redemption. |
+| USDS | [Token documentation](https://developers.skyeco.com/protocol/tokens/usds/), [formal verification references](https://developers.skyeco.com/security/security-measures/development-practices/) | Official documentation has moved; prior root pages were insufficient. Review deployment addresses, implementation hashes, audits and live mixed collateral risk. A Certora specification link alone is not evidence of a completed verification result for deployed code. |
+| DAI | [Current Dai documentation](https://developers.skyeco.com/protocol/tokens/dai/), Sky security and liquidation documentation | No usable facts in initial extraction; does not establish that DAI lacks audits. Review current collateral, dependencies and code correspondence. |
+| USDe | [Audits](https://docs.ethena.fi/resources/audits), [custodian attestations](https://docs.ethena.fi/resources/custodian-attestations), [terms](https://docs.ethena.fi/resources/usde-terms-and-conditions) | Audit page includes other tokens and contract versions: scope must match USDe. Custodian reports are not blanket hedging assurance. Generic absence of documents or hypothetical risks do not establish a critical incident. |
+| PYUSD | [Attestations](https://www.paxos.com/pyusd-transparency), [stablecoin terms](https://www.paxos.com/terms-and-conditions/stablecoin-terms-conditions) | Obtain the actual latest independent PDF. The accounting-provider appointment date is not the reporting date for all website facts. Review restrictions and versioned contract audit. |
+| RLUSD | [Transparency](https://ripple.com/products/stablecoin/transparency/), [August 2026 reserve report](https://cdn.sanity.io/files/ior4a5y3/production/4981331c98a2bb203c0c9ab2584e8b2a0da80938.pdf/RLUSD%20Attestation%20Report%20%28Aug%29_Final%20Signed.pdf), [token identifiers](https://docs.ripple.com/products/stablecoin/overview/token-addresses) | Distinguish Standard Custody as issuer from parent Ripple; reserve report versus code audit. Match contract implementation and independently reviewed stress controls. |
+| USD1 | [Attestation reports](https://worldlibertyfinancial.com/usd1/attestation-reports), [issuer explanation](https://docs.worldlibertyfinancial.com/resources/faq) | BitGo issues/redeems, while World Liberty provides brand/services. A live proof-of-reserves oracle is not an independent attestation and can have incomplete supply reads. Retrieve monthly PDF and applicable terms. |
+| USDG | [Attestations](https://www.paxos.com/usdg-transparency), [stablecoin terms](https://www.paxos.com/terms-and-conditions/stablecoin-terms-conditions) | Jurisdiction-specific issuers and redemption rights; obtain latest Singapore/EU assurance. A legal whitepaper is not an independent audit. |
+| USDD | [Version-specific documentation](https://docs.usdd.io/), [system architecture](https://docs.usdd.io/system-architecture/system-architecture) | Documentation expressly concerns the new version. Identify the version tracked by the market asset, actual contracts and audit scope before combining old and new reports. |
+
+## Verification outcome
+
+- Experimental method 1.1 retains the 0.9 acceptance threshold.
+- The eight-case live benchmark accepts two source-backed facts and rejects six wrong/unsupported cases. It is a regression benchmark, not statistical calibration of coin safety.
+- Saved candidates with invented/unsupported reporting dates and absence-based adverse statements do not become confirmed findings.
+- Two manually narrowed USDC statements pass source support/date/type checks; neither resolves its full multi-part rubric criterion. Thus no aggregate can be calculated.
+- Additional official source URLs are located discovery candidates. They have not all been added to the runtime allowlist, extracted or substantively verified, and are not presented as scored evidence.

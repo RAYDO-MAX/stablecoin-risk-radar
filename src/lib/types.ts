@@ -7,11 +7,12 @@ export type Evidence = {
   id: string; url: string; title: string; kind: 'reserve_attestation'|'financial_audit'|'code_audit'|'whitepaper'|'terms'|'market'|'disclosure';
   quote: string; document_hash: string; reporting_date: string | null; retrieved_at: string; page: number | null;
   asset_id: string; chain?: string; contract?: string; document_id?: string;
-  verification?: {confidence:number|null;verified:boolean;claim:string;criterion:string};
+  verification?: {confidence:number|null;verified:boolean;claim:string;criterion:string;criterion_verified?:boolean;version?:string;checks?:{support:number|null;date:number|null;kind:number|null;criterion:number|null};blocked?:string[]};
 };
 export type DimensionResult = {
   score: number | null; explanation: Bilingual; evidence_ids: string[];
   verified: boolean; relevant_until: string | null; conflict: boolean;
+  criteria?: {index:number;resolved:boolean;met:boolean|null;evidence_id:string|null}[];
 };
 export type Assessment = {
   id: string; asset_id: string; created_at: string; methodology_version: string; identity_signature?: string;

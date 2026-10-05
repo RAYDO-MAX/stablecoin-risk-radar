@@ -1,5 +1,5 @@
 import type {Asset, Assessment, Dimension, DimensionResult, Evidence, Profile} from './types.ts';
-export const METHODOLOGY_VERSION = '1.0-experimental';
+export const METHODOLOGY_VERSION = '1.1-experimental';
 export const WEIGHTS: Record<Dimension, number> = {backing:25,redemption:20,technology:20,governance:15,market:10,transparency:10};
 export const DIMENSIONS = Object.keys(WEIGHTS) as Dimension[];
 export const REFRESH_HOURS: Record<Profile,{market:number;documents:number;search:number}> = {economy:{market:24,documents:168,search:168},balanced:{market:1,documents:24,search:168},intensive:{market:.25,documents:6,search:24}};
