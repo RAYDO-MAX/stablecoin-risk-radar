@@ -14,13 +14,14 @@ Archiving is capped at 500 document versions and 2 MB per original. Larger origi
 
 ## Backup and restore
 
-Download the owner-only JSON export in the workspace. It excludes OAuth state and sessions. Export a full D1 snapshot and R2 separately for disaster recovery:
+Download the owner-only JSON export in the workspace. It excludes OAuth state and sessions. D1 SQL export cannot export this FTS5 database. Use a logical research export and back up private R2 objects separately:
 
 ```sh
-npx wrangler d1 export stablecoin-risk-radar --remote --output /private/tmp/radar-backup.sql
+node scripts/export-research.mjs /private/tmp/radar-backup.json
+node scripts/restore-local.mjs /private/tmp/radar-backup.json /private/tmp/radar-restore.sqlite
 ```
 
-Keep the SQL and private documents outside this public repository. Restore into a **new empty local/test database**, validate counts and public scores, and only then decide whether to restore production. R2 recovery requires copying the archive objects as well; a database export alone is not a full backup. See `scripts/restore-local.mjs` for validating the owner JSON snapshot into an isolated local SQLite database.
+Keep the JSON and private documents outside this public repository. Restore into a **new empty local/test database**, validate counts and public scores, and only then decide whether to restore production. R2 recovery requires copying the archive objects as well; a database export alone is not a full backup. See `scripts/restore-local.mjs` for validating the owner JSON snapshot into an isolated local SQLite database.
 
 ## Failure handling
 

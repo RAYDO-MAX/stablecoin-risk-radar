@@ -16,3 +16,5 @@
 Inspect source documents and candidate statements in the workspace, assess independent assurance and contract scope, and calibrate the experimental criteria/semantic threshold against manually labelled examples. Changing a threshold alone does not validate evidence. Approve or reject each first assessment; do not publish an aggregate just to fill the heatmap. Confirm the automation profile after this review.
 
 The JSON export contains research data and excludes sessions/OAuth state. D1 and private R2 archives need separate backups. Restoring database rows does not restore original archive objects.
+
+A live logical backup was restored to a separate local SQLite database: 10 assets, 10 assessments, 18 document versions and 63 candidate statements. FTS5 was rebuilt from document rows; no sessions were restored. Original R2 objects were not restored in this check. `scripts/export-research.mjs` avoids the unsupported D1 SQL-export path for virtual tables.
