@@ -7,9 +7,9 @@ export async function updateMarket(env:Env){
  const rows=await env.DB.prepare('SELECT id,data FROM assets').all<{id:string;data:string}>();const at=now();const writes=[];
  for(const row of rows.results){const a=JSON.parse(row.data) as Asset;const p=d.peggedAssets.find(p=>p.id===LLAMA_IDS[row.id]&&p.symbol===a.symbol);if(!p)continue;const finite=(v:unknown)=>typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null;
   const price=finite(p.price);const alert=price!==null&&Math.abs(price-1)>.02;
-  Object.assign(a,{market_cap:finite(p.circulating?.peggedUSD),price,market_checked_at:at,market_source:'https://defillama.com/stablecoins',review_alert:alert||a.review_alert,versions:[...a.versions,...(p.chains||[]).filter(c=>!a.versions.some(v=>v.chain===c)).map(chain=>({chain,contract:'',status:'unassessed',bridged:null}))]});
-  writes.push(env.DB.prepare('UPDATE assets SET data=? WHERE id=?').bind(JSON.stringify(a),row.id));
-  if(alert)writes.push(env.DB.prepare('INSERT INTO events VALUES(?,?,?,?,?)').bind(crypto.randomUUID(),a.id,'possible_depeg',JSON.stringify({price,source:a.market_source}),at));
+  writes.push(env.DB.prepare("UPDATE assets SET data=json_set(data,'$.market_cap',?,'$.price',?,'$.market_checked_at',?,'$.market_source',?,'$.review_alert',json(CASE WHEN ? OR json_extract(data,'$.review_alert') THEN 'true' ELSE 'false' END)) WHERE id=?").bind(finite(p.circulating?.peggedUSD),price,at,'https://defillama.com/stablecoins',alert?1:0,row.id));
+  for(const chain of Array.isArray(p.chains)?p.chains:[]){if(typeof chain!=='string')continue;writes.push(env.DB.prepare("UPDATE assets SET data=json_insert(data,'$.versions[#]',json(?)) WHERE id=? AND NOT EXISTS(SELECT 1 FROM json_each(json_extract(data,'$.versions')) WHERE json_extract(value,'$.chain')=?)").bind(JSON.stringify({chain,contract:'',status:'unassessed',bridged:null}),row.id,chain));}
+  if(alert)writes.push(env.DB.prepare('INSERT INTO events VALUES(?,?,?,?,?)').bind(crypto.randomUUID(),a.id,'possible_depeg',JSON.stringify({price,source:'https://defillama.com/stablecoins'}),at));
  }
  const s=await settings(env);s.last_market_at=at;writes.push(env.DB.prepare("UPDATE settings SET data=json_set(data,'$.last_market_at',?) WHERE id=1").bind(at));await env.DB.batch(writes);
 }

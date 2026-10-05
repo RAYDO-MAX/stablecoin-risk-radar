@@ -13,7 +13,7 @@ export type DimensionResult = {
   verified: boolean; relevant_until: string | null; conflict: boolean;
 };
 export type Assessment = {
-  id: string; asset_id: string; created_at: string; methodology_version: string;
+  id: string; asset_id: string; created_at: string; methodology_version: string; identity_signature?: string;
   dimensions: Record<Dimension, DimensionResult>; evidence: Evidence[];
   critical: 'none'|'suspected'|'confirmed'; critical_reason: Bilingual;
   score: number | null; completeness: number; status: 'insufficient'|'evaluated'|'critical'|'needs_review';
