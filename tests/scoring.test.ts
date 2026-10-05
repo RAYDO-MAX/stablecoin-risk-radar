@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {calculate,needsReview,auditMatches,validateQuote,isDue,REFRESH_HOURS,validCitations,identitySignature,assessmentForAsset} from '../src/lib/scoring';
+import {calculate,needsReview,auditMatches,validateQuote,isDue,REFRESH_HOURS,validCitations,identitySignature,assessmentForAsset,METHODOLOGY_VERSION} from '../src/lib/scoring';
 import {CATALOG} from '../src/lib/catalog';
 import type {Assessment,DimensionResult,Evidence} from '../src/lib/types';
 const now=new Date('2026-10-05T12:00:00Z');
@@ -15,6 +15,6 @@ describe('risk methodology',()=>{
  it('rejects NaN and out-of-range scores',()=>{for(const score of [NaN,101,-1]){const d=dims();d.market.score=score;expect(calculate(d,[e],'none',now).score).toBeNull();}});
  it('rejects wrong-chain and wrong-contract audit evidence',()=>{expect(auditMatches(e,'usdc','ethereum','0xabc')).toBe(true);expect(auditMatches(e,'usdc','arbitrum','0xabc')).toBe(false);expect(auditMatches(e,'usdt')).toBe(false);});
  it('rejects invented quotes and citations',()=>{expect(validateQuote('This report concerns the named contract.','This report concerns\n the named contract.')).toBe(true);expect(validateQuote('Invented statement in the model response.',e.quote)).toBe(false);expect(validCitations(['fake'],[e])).toBe(false);});
- it('invalidates a published assessment when identity or a contract changes',()=>{const asset={...CATALOG[1],versions:[{chain:'ethereum',contract:'0xABC',status:'unassessed' as const,bridged:false}]};const a={...assessment(80),identity_signature:identitySignature(asset)};expect(assessmentForAsset(a,asset).score).toBe(80);expect(assessmentForAsset(a,{...asset,issuer:'Different issuer'})).toMatchObject({score:null,status:'needs_review',completeness:0});expect(needsReview(a,{...a,identity_signature:'changed'})).toBe(true);expect(auditMatches({...e,contract:'AbCdEf'},'usdc','ethereum','abcdef')).toBe(false);});
+ it('invalidates a published assessment when identity or a contract changes',()=>{const asset={...CATALOG[1],versions:[{chain:'ethereum',contract:'0xABC',status:'unassessed' as const,bridged:false}]};const a={...assessment(80),methodology_version:METHODOLOGY_VERSION,identity_signature:identitySignature(asset)};expect(assessmentForAsset(a,asset).score).toBe(80);expect(assessmentForAsset(a,{...asset,issuer:'Different issuer'})).toMatchObject({score:null,status:'needs_review',completeness:0});expect(needsReview(a,{...a,identity_signature:'changed'})).toBe(true);expect(assessmentForAsset({...a,methodology_version:'old-method'},asset)).toMatchObject({score:null,status:'needs_review'});expect(auditMatches({...e,contract:'AbCdEf'},'usdc','ethereum','abcdef')).toBe(false);});
  it('uses the selected cadence without AI',()=>{expect(REFRESH_HOURS.intensive.market).toBe(.25);expect(isDue('2026-10-05T11:50:00Z',.25,now)).toBe(false);expect(isDue(null,1,now)).toBe(true);});
 });
